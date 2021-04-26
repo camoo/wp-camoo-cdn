@@ -3,6 +3,10 @@ declare(strict_types=1);
 
 namespace WP_CAMOO\CDN\Services;
 
+if (! defined('ABSPATH')) {
+    exit;
+} // Exit if accessed directly
+
 use  WP_CAMOO\CDN\Gateways\Option;
 
 use DOMDocument;

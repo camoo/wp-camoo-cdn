@@ -11,7 +11,7 @@ if (! defined('ABSPATH')) {
  * Class Option
  * @author CamooSarl
  */
-class Option
+final class Option
 {
     const MAIN_SETTING_KEY = 'wp_camoo_cdn_url';
 

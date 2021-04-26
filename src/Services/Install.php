@@ -14,7 +14,7 @@ use  WP_CAMOO\CDN\Gateways\Option;
  * Class Install
  * @author CamooSarl
  */
-class Install
+final class Install
 {
     private function __construct()
     {
@@ -40,7 +40,6 @@ class Install
             self::upgrade();
         }
     }
-
 
     /**
      * Upgrade plugin requirements if needed
