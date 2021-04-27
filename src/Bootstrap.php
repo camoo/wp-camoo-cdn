@@ -26,7 +26,7 @@ final class Bootstrap
     public function modify_plugin_description($all_plugins)
     {
         if (isset($all_plugins[self::PLUGIN_MAIN_FILE])) {
-            $all_plugins[static::PLUGIN_MAIN_FILE]['Description'] = sprintf(__('Camoo.Hosting Automatic Integration with CDN for Wordpress. Check our <a target="_blank" href="%s">Managed WordPress packages</a> out for more.', 'wp-camoo-cdn'), WP_CAMOO_CDN_SITE  .'/wordpress-hosting');
+            $all_plugins[static::PLUGIN_MAIN_FILE]['Description'] = sprintf(__('Camoo.Hosting Automatic Integration with CDN for WordPress. Check our <a target="_blank" href="%s">Managed WordPress packages</a> out for more.', 'wp-camoo-cdn'), WP_CAMOO_CDN_SITE  .'/wordpress-hosting');
         }
         return $all_plugins;
     }

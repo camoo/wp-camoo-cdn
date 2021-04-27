@@ -22,10 +22,8 @@ final class Install
 
     /**
      * Creating plugin tables
-     *
-     * @param $network_wide
      */
-    public static function install()
+    public static function install() : void
     {
         Option::add('wp_camoo_cdn_db_version', WP_CAMOO_CDN_VERSION);
         Option::delete('wp_notification_new_wp_version');
@@ -33,7 +31,7 @@ final class Install
         $url = Option::get();
 
         if (empty($url)) {
-            Option::add('wp_camoo_cdn_url', 'https://cdn.camoo.hosting');
+            return;
         }
 
         if (is_admin()) {
@@ -44,11 +42,11 @@ final class Install
     /**
      * Upgrade plugin requirements if needed
      */
-    public static function upgrade()
+    public static function upgrade() : void
     {
-        $installer_wpcamoosms_ver = Option::get('wp_camoo_cdn_db_version');
+        $installer_wpcamoocdn_ver = Option::get('wp_camoo_cdn_db_version');
 
-        if ($installer_wpcamoosms_ver < WP_CAMOO_CDN_VERSION) {
+        if ($installer_wpcamoocdn_ver < WP_CAMOO_CDN_VERSION) {
             Option::update('wp_camoo_cdn_db_version', WP_CAMOO_CDN_VERSION);
         }
     }

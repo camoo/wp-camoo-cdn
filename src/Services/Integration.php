@@ -73,9 +73,13 @@ final class Integration
         return $urlparts['host'];
     }
 
-    private static function getCDNUrl() : string
+    private static function getCDNUrl() : ?string
     {
-        return Option::get();
+        $url = Option::get();
+        if ($url === false) {
+            return null;
+        }
+        return $url;
     }
 
     public static function start_wp_head_buffer()  : void
@@ -85,10 +89,14 @@ final class Integration
 
     public static function cdn_head_urls() : void
     {
+        $cdnUrl = self::getCDNUrl();
+        if (empty($cdnUrl)) {
+            return;
+        }
+
         $content = ob_get_clean();
 
         $doc = new DOMDocument();
-        $cdnUrl = self::getCDNUrl();
         $doc->loadHTML($content);
         $domcss = $doc->getElementsByTagName('link');
         $domJs = $doc->getElementsByTagName('script');
@@ -127,11 +135,16 @@ final class Integration
 
     public static function cdn_footer_urls() : void
     {
+        $cdnUrl = self::getCDNUrl();
+        if (empty($cdnUrl)) {
+            return;
+        }
+
+
         $content = ob_get_clean();
 
         $doc = new DOMDocument();
         $doc->loadHTML($content);
-        $cdnUrl = self::getCDNUrl();
         $domcss = $doc->getElementsByTagName('link');
         $domJs = $doc->getElementsByTagName('script');
         $domain = self::getDomain();
@@ -169,8 +182,13 @@ final class Integration
 
     public static function cdn_content_urls(string $content) : string
     {
-        $domain = self::getDomain();
         $cdnUrl = self::getCDNUrl();
+
+        if (empty($cdnUrl)) {
+            return $content;
+        }
+
+        $domain = self::getDomain();
         $content = str_replace(['http://' . $domain.'/wp-content/uploads', 'http://www.' . $domain .'/wp-content/uploads'], $cdnUrl."/wp-content/uploads", $content);
         $content = str_replace(['https://' . $domain.'/wp-content/uploads', 'https://www.' . $domain .'/wp-content/uploads'], $cdnUrl."/wp-content/uploads", $content);
         return $content;
