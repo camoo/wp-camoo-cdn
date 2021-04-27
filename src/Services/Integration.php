@@ -188,9 +188,14 @@ final class Integration
             return $content;
         }
 
+        $uploadDir = wp_upload_dir();
+        $baseUploadUrl = $uploadDir['baseurl'];
+
+        $urlParsed = parse_url($baseUploadUrl);
+        $path = $urlParsed['path'];
+
         $domain = self::getDomain();
-        $content = str_replace(['http://' . $domain.'/wp-content/uploads', 'http://www.' . $domain .'/wp-content/uploads'], $cdnUrl."/wp-content/uploads", $content);
-        $content = str_replace(['https://' . $domain.'/wp-content/uploads', 'https://www.' . $domain .'/wp-content/uploads'], $cdnUrl."/wp-content/uploads", $content);
+        $content = str_replace([$baseUploadUrl], $cdnUrl.$path, $content);
         return $content;
     }
 
