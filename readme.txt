@@ -28,9 +28,6 @@ No, You don't! After you purchase a WordPress Hosting order, our system will add
 = How can I purchase a WordPress Hosting order? =
 All you need is just to [visit our hosting packages](https://www.camoo.hosting/wordpress-hosting).
 
-= Does the plugin make any remote calls? =
-No !
-
 == Screenshots ==
 N/A
 
