@@ -31,6 +31,9 @@ All you need is just to [visit our hosting packages](https://www.camoo.hosting/w
 = Does the plugin make any remote calls? =
 No !
 
+== Screenshots ==
+N/A
+
 == Upgrade Notice ==
 N/A
 
