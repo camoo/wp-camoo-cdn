@@ -14,7 +14,7 @@ use WP_CAMOO\CDN\Services\Integration;
  */
 final class Bootstrap
 {
-    const PLUGIN_MAIN_FILE = 'wp-camoo-cdn/wp-camoo-cdn.php';
+    const PLUGIN_MAIN_FILE = 'wp-camoo-cdn/camoo-cdn.php';
     public function initialze() : void
     {
         require_once dirname(plugin_dir_path(__FILE__)) . '/config/defines.php';

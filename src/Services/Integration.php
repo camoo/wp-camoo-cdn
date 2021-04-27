@@ -20,8 +20,8 @@ final class Integration
     private function __construct()
     {
         add_action('plugins_loaded', [Integration::class, 'init_actions']);
-        register_activation_hook(WP_CAMOO_CDN_DIR . 'wp-camoo-cdn.php', [Install::class, 'install']);
-        register_deactivation_hook(WP_CAMOO_CDN_DIR . 'wp-camoo-cdn.php', [$this, 'cdn_status_plugin_deactivate']);
+        register_activation_hook(WP_CAMOO_CDN_DIR . 'camoo-cdn.php', [Install::class, 'install']);
+        register_deactivation_hook(WP_CAMOO_CDN_DIR . 'camoo-cdn.php', [$this, 'cdn_status_plugin_deactivate']);
     }
 
     public static function initialze(): void

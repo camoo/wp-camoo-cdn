@@ -16,7 +16,7 @@ define('WP_CAMOO_CDN_URL', plugin_dir_url(dirname(__FILE__)));
 define('WP_CAMOO_CDN_DIR', plugin_dir_path(dirname(__FILE__)));
 
 // Get plugin Data.
-$plugin_data = get_plugin_data(WP_CAMOO_CDN_DIR . 'wp-camoo-cdn.php');
+$plugin_data = get_plugin_data(WP_CAMOO_CDN_DIR . 'camoo-cdn.php');
 
 // Set another useful Plugin defines.
 define('WP_CAMOO_CDN_VERSION', $plugin_data['Version']);

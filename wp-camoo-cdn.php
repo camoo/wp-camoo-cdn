@@ -1,11 +1,10 @@
 <?php
 declare(strict_types=1);
 /**
- * Class WPCamooCDN
  *
- * Plugin Name: WordPress CAMOO CDN
+ * Plugin Name: CAMOO CDN
  * Plugin URI:  https://github.com/camoo/wp-camoo-cdn
- * Description: Camoo.Hosting CDN Integration for WordPress
+ * Description: Camoo.Hosting Automatic CDN Integration
  * Version:     1.0
  * Author:      CAMOO SARL
  * Author URI:  https://www.camoo.hosting/
@@ -14,7 +13,7 @@ declare(strict_types=1);
  * Text Domain: wp-camoo-cdn
  * Domain Path: /languages
  * Requires at least: 5.6
- * Requires PHP: 7.3
+ * Requires PHP: 7.2
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
  * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
