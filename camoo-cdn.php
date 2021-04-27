@@ -10,7 +10,7 @@ declare(strict_types=1);
  * Author URI:  https://www.camoo.hosting/
  * License:     MIT
  * License URI: https://opensource.org/licenses/MIT
- * Text Domain: wp-camoo-cdn
+ * Text Domain: camoo-cdn
  * Domain Path: /languages
  * Requires at least: 5.6
  * Requires PHP: 7.2
