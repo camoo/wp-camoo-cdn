@@ -97,7 +97,7 @@ final class Integration
         $content = ob_get_clean();
 
         $doc = new DOMDocument();
-        $doc->loadHTML($content);
+        @$doc->loadHTML($content);
         $domcss = $doc->getElementsByTagName('link');
         $domJs = $doc->getElementsByTagName('script');
         $domain = self::getDomain();
@@ -144,7 +144,7 @@ final class Integration
         $content = ob_get_clean();
 
         $doc = new DOMDocument();
-        $doc->loadHTML($content);
+        @$doc->loadHTML($content);
         $domcss = $doc->getElementsByTagName('link');
         $domJs = $doc->getElementsByTagName('script');
         $domain = self::getDomain();
