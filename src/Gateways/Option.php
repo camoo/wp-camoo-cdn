@@ -20,7 +20,7 @@ final class Option
      *
      * @param string $setting_name setting name
      *
-     * @return mixed|void
+     * @return mixed|string
      */
     public static function get(string $setting_name=null)
     {
@@ -36,7 +36,7 @@ final class Option
      * @param $option_name
      * @param $option_value
      */
-    public static function add($option_name, $option_value)
+    public static function add(string $option_name, $option_value) : void
     {
         add_option($option_name, $option_value);
     }
@@ -46,7 +46,7 @@ final class Option
         delete_option($name);
     }
 
-    public static function update($option_name, $option_value) : void
+    public static function update(string $option_name, $option_value) : void
     {
         update_option($option_name, $option_value);
     }

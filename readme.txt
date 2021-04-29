@@ -1,6 +1,6 @@
 === CAMOO CDN ===
 Contributors: camoo
-Tags: Camoo.Hosting CDN Integration
+Tags: Camoo.Hosting, CAMOO CDN Integration, Managed Hosting with CDN, Hébergement Web avec CDN
 Requires at least: 5.6
 Tested up to: 5.7.1
 Requires PHP: 7.2
@@ -8,7 +8,7 @@ Stable tag: 1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Camoo.Hosting CDN Integration
+Camoo.Hosting Automatic Integration with CDN for WordPress websites.
 
 == Description ==
 Camoo.Hosting Automatic Integration with CDN for websites
@@ -29,7 +29,7 @@ No, You don't! After you purchase a WordPress Hosting order, our system will add
 All you need is just to [visit our hosting packages](https://www.camoo.hosting/wordpress-hosting).
 
 == Screenshots ==
-N/A
+1. Install CAMOO CDN from WordPress Plugin Directory
 
 == Upgrade Notice ==
 N/A
