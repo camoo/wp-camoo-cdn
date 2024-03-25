@@ -12,7 +12,7 @@ final class SyncSnapshots
     public function compare(Generator $currentFilesGenerator): Generator
     {
         // Retrieve the previous snapshot from the database
-        $previous_snapshot = get_option('WP_CAMOO_CDN_SNAPSHOT', []);
+        $previous_snapshot = get_option(WP_CAMOO_CDN_SNAPSHOT, []);
         $currentFiles = [];
 
         // Building current files array from the generator for comparison

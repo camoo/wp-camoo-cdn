@@ -4,7 +4,7 @@ Tags: Camoo.Hosting, CAMOO CDN Integration, Managed Hosting with CDN, Hébergeme
 Requires at least: 6.4.3
 Tested up to: 6.5
 Requires PHP: 8.0
-Stable tag: 2.0
+Stable tag: 2.0.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -41,11 +41,14 @@ All you need is just to [visit our hosting packages](https://www.camoo.hosting/w
 = 2.0 =
 Ensure WP Super Cache is installed and activated to use CAMOO CDN's latest features.
 
+== Changelog ==
+= 2.0.1: 26.03, 2024 =
+* Tweak: uninstall script added
+* Tweak: minor improvements
+
 = 2.0: 25.03, 2024 =
 * Tweak: requires wp-super-cache
 * Tweak: Tested up to 6.5
 
-
-== Changelog ==
 = 1.0 =
 * Start plugin

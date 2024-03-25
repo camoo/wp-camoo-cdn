@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace WP_CAMOO\CDN\Services;
 
+use WP_CAMOO\CDN\Dto\FileState;
 use WP_CAMOO\CDN\Exception\FileStateException;
 use WP_CAMOO\CDN\Gateways\Option;
 
@@ -18,7 +19,7 @@ final class SyncFiles
         }
 
         $domain = parse_url(home_url(), PHP_URL_HOST);
-        $cdnUrl = 'https://cm-s3.camoo.hosting/492220c341f7489996eb01871a2e8aca:' . $domain;
+        $cdnUrl = WP_CAMOO_CDN_URL . '/' . $domain;
         update_option('ossdl_off_cdn_url', $cdnUrl);
         update_option('ossdl_off_blog_url', get_site_url());
 
@@ -103,7 +104,7 @@ final class SyncFiles
         $currentFiles = [];
         foreach ($syncSnapshots->compare($fileListGenerator) as $fileStateDTO) {
             match ($fileStateDTO->state) {
-                'new', 'modified' => self::proceedNewOrModifiedFile($fileStateDTO->path, $currentFiles),
+                'new', 'modified' => self::proceedNewOrModifiedFile($fileStateDTO, $currentFiles),
                 'deleted' => self::proceedDeleteFile($fileStateDTO->path),
                 default => throw new FileStateException('Unknown file state: ' . $fileStateDTO->state),
             };
@@ -111,9 +112,11 @@ final class SyncFiles
         self::updateSnapshot($currentFiles);
     }
 
-    private static function proceedNewOrModifiedFile(string $file, array &$currentFiles): void
+    private static function proceedNewOrModifiedFile(FileState $fileState, array &$currentFiles): void
     {
         $api_url = WP_CAMOO_CDN_SITE . '/cpanel/managed-wordpress/import-cdn-file.json';
+
+        $file = $fileState->path;
 
         if (!file_exists($file)) {
             return;
@@ -149,7 +152,7 @@ final class SyncFiles
         }
 
         // Add the file to the currentFiles list if successful
-        $currentFiles[] = $file;
+        $currentFiles[$file] = $fileState->mtime;
     }
 
     private static function proceedDeleteFile(string $file): void
@@ -166,7 +169,8 @@ final class SyncFiles
 
         $api_url = WP_CAMOO_CDN_SITE . '/cpanel/managed-wordpress/delete-cdn-file.json?dn=' .
             urlencode($current_domain) . '&filename=' . urlencode($filename) .
-            '&path=' . urlencode($relative_directory_path);
+            '&file_path=' . urlencode($relative_directory_path);
+
         // Perform the HTTP request to the API
         $response = wp_remote_get($api_url);
 
@@ -195,8 +199,6 @@ final class SyncFiles
                 'Unexpected response format when deleting cdn file: ' . $file,
                 60 * 10
             );
-
         }
-
     }
 }

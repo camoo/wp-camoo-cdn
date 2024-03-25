@@ -19,7 +19,13 @@ final class Integration
 
         add_action('plugins_loaded', [__CLASS__, 'init_actions']);
         register_activation_hook(WP_CAMOO_CDN_DIR . 'camoo-cdn.php', [Install::class, 'install']);
+        register_activation_hook(WP_CAMOO_CDN_DIR . 'camoo-cdn.php', [__CLASS__, 'onActivation']);
         register_deactivation_hook(WP_CAMOO_CDN_DIR . 'camoo-cdn.php', [__CLASS__, 'onDeactivation']);
+    }
+
+    public static function onActivation(): void
+    {
+        self::schedule_sync_soon();
     }
 
     public static function wp_super_cache_missing_notice(): void
@@ -77,7 +83,6 @@ final class Integration
             wp_unschedule_event($timestamp, 'wp_camoo_cdn_cron');
         }
         wp_clear_scheduled_hook('wp_camoo_cdn_cron_soon');
-
 
         delete_option('ossdl_off_cdn_url');
         delete_option('ossdl_off_blog_url');
