@@ -1,206 +1,88 @@
 <?php
+
 declare(strict_types=1);
 
 namespace WP_CAMOO\CDN\Services;
 
-if (! defined('ABSPATH')) {
-    exit;
-} // Exit if accessed directly
-
-use  WP_CAMOO\CDN\Gateways\Option;
-
-use DOMDocument;
-
-/**
- * Class Integration
- * @author CamooSarl
- */
 final class Integration
 {
-    private function __construct()
+    /** Initializes the plugin's hooks and schedules. */
+    public static function initialize(): void
     {
-        add_action('plugins_loaded', [Integration::class, 'init_actions']);
-        register_activation_hook(WP_CAMOO_CDN_DIR . 'camoo-cdn.php', [Install::class, 'install']);
-        register_deactivation_hook(WP_CAMOO_CDN_DIR . 'camoo-cdn.php', [$this, 'cdn_status_plugin_deactivate']);
-    }
 
-    public static function initialze(): void
-    {
-        new static;
-    }
+        // Check if WP Super Cache is active
+        if (!is_plugin_active('wp-super-cache/wp-cache.php')) {
+            add_action('admin_notices', [__CLASS__, 'wp_super_cache_missing_notice']);
 
-    public static function init_actions() : void
-    {
-        // Performance
-        add_filter('style_loader_src', [__CLASS__, 'remove_cssjs_ver'], 10, 2);
-        add_filter('script_loader_src', [__CLASS__, 'remove_cssjs_ver'], 10, 2);
-        remove_action('wp_head', 'wp_generator');
-        remove_action('wp_head', 'print_emoji_detection_script', 7);
-        remove_action('wp_print_styles', 'print_emoji_styles');
-        remove_action('admin_print_scripts', 'print_emoji_detection_script');
-        remove_action('admin_print_styles', 'print_emoji_styles');
-        remove_action('wp_head', 'wlwmanifest_link');
-        add_action('wp_deregister_script', [__CLASS__, 'stop_heartbeat'], 1);
-        remove_action('wp_head', 'rsd_link');
-        add_filter('xmlrpc_enabled', '__return_false');
-
-        // CDN
-        add_filter('the_content', [__CLASS__,'cdn_content_urls']);
-        // head
-        add_action('wp_head', [__CLASS__,'start_wp_head_buffer'], 0);
-        add_action('wp_head', [__CLASS__, 'cdn_head_urls'], PHP_INT_MAX);
-        // footer
-        add_action('wp_footer', [__CLASS__,'start_wp_head_buffer'], 0);
-        add_action('wp_footer', [__CLASS__, 'cdn_footer_urls'], PHP_INT_MAX);
-    }
-
-    public static function stop_heartbeat() : void
-    {
-        wp_deregister_script('heartbeat');
-    }
-
-    public static function remove_cssjs_ver(string $src) : string
-    {
-        if (strpos($src, '?ver=')) {
-            $src = remove_query_arg('ver', $src);
-        }
-        return $src;
-    }
-
-    private static function getDomain() : string
-    {
-        $urlparts = parse_url(home_url());
-        return $urlparts['host'];
-    }
-
-    private static function getCDNUrl() : ?string
-    {
-        $url = Option::get();
-        if ($url === false) {
-            return null;
-        }
-        return $url;
-    }
-
-    public static function start_wp_head_buffer()  : void
-    {
-        ob_start();
-    }
-
-    public static function cdn_head_urls() : void
-    {
-        $cdnUrl = self::getCDNUrl();
-        if (empty($cdnUrl)) {
             return;
         }
 
-        $content = ob_get_clean();
-
-        $doc = new DOMDocument();
-        @$doc->loadHTML($content);
-        $domcss = $doc->getElementsByTagName('link');
-        $domJs = $doc->getElementsByTagName('script');
-        $domain = self::getDomain();
-        // CSS
-        if ($domcss->length > 0) {
-            foreach ($domcss as $links) {
-                if (strtolower($links->getAttribute('rel')) === "stylesheet") {
-                    $cssLink = $links->getAttribute('href');
-                    $urlParsed = parse_url($cssLink);
-                    $host = $urlParsed['host'];
-                    if (in_array($host, [$domain, 'www.' . $domain])) {
-                        $content = preg_replace_callback(sprintf("#%s#", $cssLink), function ($match) use ($host, $cdnUrl) {
-                            return str_replace(['http://'. $host, 'https://'. $host], $cdnUrl, $match[0]);
-                        }, $content);
-                    }
-                }
-            }
-        }
-        // JS
-        if ($domJs->length > 0) {
-            foreach ($domJs as $links) {
-                $jsLink = $links->getAttribute('src');
-                $urlParsed = parse_url($jsLink);
-                $host = $urlParsed['host'];
-                if (in_array($host, [$domain, 'www.' . $domain])) {
-                    $content = preg_replace_callback(sprintf("#%s#", $jsLink), function ($match) use ($host, $cdnUrl) {
-                        return str_replace(['http://'. $host, 'https://'. $host], $cdnUrl, $match[0]);
-                    }, $content);
-                }
-            }
-        }
-
-        print $content;
+        add_action('plugins_loaded', [__CLASS__, 'init_actions']);
+        register_deactivation_hook(WP_CAMOO_CDN_DIR . 'camoo-cdn.php', [__CLASS__, 'onDeactivation']);
     }
 
-    public static function cdn_footer_urls() : void
+    public static function wp_super_cache_missing_notice(): void
     {
-        $cdnUrl = self::getCDNUrl();
-        if (empty($cdnUrl)) {
-            return;
-        }
-
-
-        $content = ob_get_clean();
-
-        $doc = new DOMDocument();
-        @$doc->loadHTML($content);
-        $domcss = $doc->getElementsByTagName('link');
-        $domJs = $doc->getElementsByTagName('script');
-        $domain = self::getDomain();
-        // CSS
-        if ($domcss->length > 0) {
-            foreach ($domcss as $links) {
-                if (strtolower($links->getAttribute('rel')) === "stylesheet") {
-                    $cssLink = $links->getAttribute('href');
-                    $urlParsed = parse_url($cssLink);
-                    $host = $urlParsed['host'];
-                    if (in_array($host, [$domain, 'www.' . $domain])) {
-                        $content = preg_replace_callback(sprintf("#%s#", $cssLink), function ($match) use ($host, $cdnUrl) {
-                            return str_replace(['http://'. $host, 'https://'. $host], $cdnUrl, $match[0]);
-                        }, $content);
-                    }
-                }
-            }
-        }
-        // JS
-        if ($domJs->length > 0) {
-            foreach ($domJs as $links) {
-                $jsLink = $links->getAttribute('src');
-                $urlParsed = parse_url($jsLink);
-                $host = $urlParsed['host'];
-                if (in_array($host, [$domain, 'www.' . $domain])) {
-                    $content = preg_replace_callback(sprintf("#%s#", $jsLink), function ($match) use ($host, $cdnUrl) {
-                        return str_replace(['http://'. $host, 'https://'. $host], $cdnUrl, $match[0]);
-                    }, $content);
-                }
-            }
-        }
-
-        print $content;
+        ?>
+        <div class="notice notice-warning">
+            <p><?php _e(
+                'WP Super Cache is not active. Please activate WP Super Cache for the CAMOO CDN plugin to work correctly.',
+                'camoo-cdn'
+            ); ?></p>
+        </div>
+        <?php
     }
 
-    public static function cdn_content_urls(string $content) : string
+    /** Sets up actions and filters, including custom cron schedules. */
+    public static function init_actions(): void
     {
-        $cdnUrl = self::getCDNUrl();
-
-        if (empty($cdnUrl)) {
-            return $content;
-        }
-
-        $uploadDir = wp_upload_dir();
-        $baseUploadUrl = $uploadDir['baseurl'];
-
-        $urlParsed = parse_url($baseUploadUrl);
-        $path = $urlParsed['path'];
-
-        $domain = self::getDomain();
-        $content = str_replace([$baseUploadUrl], $cdnUrl.$path, $content);
-        return $content;
+        add_filter('cron_schedules', [self::class, 'addCustomCronSchedule']);
+        self::schedule_regular_sync();
+        add_action('wp_camoo_cdn_cron', [SyncFiles::class, 'sync']); // Regular sync
+        add_action('wp_camoo_cdn_cron_soon', [SyncFiles::class, 'sync']); // Immediate sync
     }
 
-    public function cdn_status_plugin_deactivate()
+    /**
+     * Adds custom intervals to the cron schedules.
+     *
+     * @param mixed $schedules Existing cron schedules.
+     *
+     * @return array Modified cron schedules.
+     */
+    public static function addCustomCronSchedule($schedules): array
     {
-        flush_rewrite_rules();
+        $schedules['camoo_cdn_cron_every_four_days'] = [
+            'interval' => 4 * DAY_IN_SECONDS,
+            'display' => __('Once Every 4 Days', 'camoo-cdn'),
+        ];
+
+        return $schedules;
+    }
+
+    /** Schedules an immediate sync task. */
+    public static function schedule_sync_soon(): void
+    {
+        if (wp_next_scheduled('wp_camoo_cdn_cron_soon')) {
+            wp_clear_scheduled_hook('wp_camoo_cdn_cron_soon');
+        }
+        wp_schedule_single_event(time() + MINUTE_IN_SECONDS, 'wp_camoo_cdn_cron_soon');
+    }
+
+    /** Clears scheduled tasks on plugin deactivation. */
+    public static function onDeactivation(): void
+    {
+        $timestamp = wp_next_scheduled('wp_camoo_cdn_cron');
+        if ($timestamp) {
+            wp_unschedule_event($timestamp, 'wp_camoo_cdn_cron');
+        }
+        wp_clear_scheduled_hook('wp_camoo_cdn_cron_soon'); // Ensure immediate syncs are also cleared
+    }
+
+    /** Schedules the regular sync if it's not already scheduled. */
+    private static function schedule_regular_sync(): void
+    {
+        if (!wp_next_scheduled('wp_camoo_cdn_cron')) {
+            wp_schedule_event(time(), 'camoo_cdn_cron_every_four_days', 'wp_camoo_cdn_cron');
+        }
     }
 }

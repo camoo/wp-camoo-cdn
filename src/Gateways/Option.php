@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace WP_CAMOO\CDN\Gateways;
 
+
 if (! defined('ABSPATH')) {
     exit;
 } // Exit if accessed directly
@@ -25,7 +26,7 @@ final class Option
     public static function get(string $setting_name=null)
     {
         if (null === $setting_name) {
-            $setting_name = static::MAIN_SETTING_KEY;
+            $setting_name = self::MAIN_SETTING_KEY;
         }
         return get_option($setting_name);
     }
@@ -33,7 +34,7 @@ final class Option
     /**
      * Add an option
      *
-     * @param $option_name
+     * @param string $option_name
      * @param $option_value
      */
     public static function add(string $option_name, $option_value) : void

@@ -1,29 +1,24 @@
 <?php
+
 declare(strict_types=1);
 
 namespace WP_CAMOO\CDN\Services;
 
-if (! defined('ABSPATH')) {
+if (!defined('ABSPATH')) {
     exit;
 } // Exit if accessed directly
 
-use WP_CAMOO\CDN\Bootstrap;
-use  WP_CAMOO\CDN\Gateways\Option;
+use WP_CAMOO\CDN\Gateways\Option;
 
 /**
  * Class Install
+ *
  * @author CamooSarl
  */
 final class Install
 {
-    private function __construct()
-    {
-    }
-
-    /**
-     * Creating plugin tables
-     */
-    public static function install() : void
+    /** Creating plugin tables */
+    public static function install(): void
     {
         Option::add('wp_camoo_cdn_db_version', WP_CAMOO_CDN_VERSION);
         Option::delete('wp_notification_new_wp_version');
@@ -39,10 +34,8 @@ final class Install
         }
     }
 
-    /**
-     * Upgrade plugin requirements if needed
-     */
-    public static function upgrade() : void
+    /** Upgrade plugin requirements if needed */
+    public static function upgrade(): void
     {
         $installer_wpcamoocdn_ver = Option::get('wp_camoo_cdn_db_version');
 
