@@ -1,7 +1,8 @@
 <?php
+
 declare(strict_types=1);
+
 /**
- *
  * Plugin Name: CAMOO CDN
  *  Requires Plugins: wp-super-cache
  * Plugin URI: https://github.com/camoo/wp-camoo-cdn
@@ -19,10 +20,9 @@ declare(strict_types=1);
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
  * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  */
-
-if (! defined('ABSPATH')) {
+if (!defined('ABSPATH')) {
     die('Invalid request.');
 }
 
 require_once plugin_dir_path(__FILE__) . 'src/Bootstrap.php';
-(new \WP_CAMOO\CDN\Bootstrap)->initialize();
+(new WP_CAMOO\CDN\Bootstrap())->initialize();

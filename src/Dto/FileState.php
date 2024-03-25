@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace WP_CAMOO\CDN\Dto;
 
 final class FileState
