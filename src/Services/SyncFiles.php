@@ -8,17 +8,29 @@ use WP_CAMOO\CDN\Dto\FileState;
 use WP_CAMOO\CDN\Exception\FileStateException;
 use WP_CAMOO\CDN\Gateways\Option;
 
+if (!defined('ABSPATH')) {
+    exit;
+} // Exit if accessed directly
+
 final class SyncFiles
 {
     public static function sync(): void
     {
+        $domain = parse_url(home_url(), PHP_URL_HOST);
+
         if (!self::canCDN()) {
-            self::logError('CDN is not available for the current domain.');
+            $packages_url = esc_url(WP_CAMOO_CDN_SITE . '/wordpress-hosting');
+            $domain = parse_url(home_url(), PHP_URL_HOST);
+            $link_text = __('Managed WordPress packages', 'camoo-cdn');
+            $message_format = __('CDN is not available for your domain: %s. Check our %s out for more.', 'camoo-cdn');
+            $link_html = sprintf('<a href="%s" target="_blank">%s</a>', esc_url($packages_url), esc_html($link_text));
+            $fullMessage = sprintf($message_format, esc_html($domain), $link_html);
+
+            self::logError($fullMessage);
 
             return;
         }
 
-        $domain = parse_url(home_url(), PHP_URL_HOST);
         $cdnUrl = WP_CAMOO_CDN_URL . '/' . $domain;
         update_option('ossdl_off_cdn_url', $cdnUrl);
         update_option('ossdl_off_blog_url', get_site_url());
@@ -104,8 +116,11 @@ final class SyncFiles
         $currentFiles = [];
         foreach ($syncSnapshots->compare($fileListGenerator) as $fileStateDTO) {
             match ($fileStateDTO->state) {
-                'new', 'modified' => self::proceedNewOrModifiedFile($fileStateDTO, $currentFiles),
-                'deleted' => self::proceedDeleteFile($fileStateDTO->path),
+                SyncSnapshots::STATE_NEW,SyncSnapshots::STATE_MODIFIED => self::proceedNewOrModifiedFile(
+                    $fileStateDTO,
+                    $currentFiles
+                ),
+                SyncSnapshots::STATE_DELETED => self::proceedDeleteFile($fileStateDTO->path),
                 default => throw new FileStateException('Unknown file state: ' . $fileStateDTO->state),
             };
         }

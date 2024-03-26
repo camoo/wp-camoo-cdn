@@ -4,12 +4,17 @@ declare(strict_types=1);
 
 namespace WP_CAMOO\CDN\Services;
 
+use WP_CAMOO\CDN\Gateways\Option;
+
+if (!defined('ABSPATH')) {
+    exit;
+} // Exit if accessed directly
+
 final class Integration
 {
     /** Initializes the plugin's hooks and schedules. */
     public static function initialize(): void
     {
-
         // Check if WP Super Cache is active
         if (!is_plugin_active('wp-super-cache/wp-cache.php')) {
             add_action('admin_notices', [__CLASS__, 'wp_super_cache_missing_notice']);
@@ -18,26 +23,28 @@ final class Integration
         }
 
         add_action('plugins_loaded', [__CLASS__, 'init_actions']);
-        register_activation_hook(WP_CAMOO_CDN_DIR . 'camoo-cdn.php', [Install::class, 'install']);
         register_activation_hook(WP_CAMOO_CDN_DIR . 'camoo-cdn.php', [__CLASS__, 'onActivation']);
         register_deactivation_hook(WP_CAMOO_CDN_DIR . 'camoo-cdn.php', [__CLASS__, 'onDeactivation']);
     }
 
     public static function onActivation(): void
     {
+        self::install();
         self::schedule_sync_soon();
     }
 
     public static function wp_super_cache_missing_notice(): void
     {
-        ?>
-        <div class="notice notice-warning">
-            <p><?php _e(
-                'WP Super Cache is not active. Please activate WP Super Cache for the CAMOO CDN plugin to work correctly.',
-                'camoo-cdn'
-            ); ?></p>
-        </div>
-        <?php
+
+        echo '<div class="notice notice-warning">';
+        echo '<p>';
+        _e(
+            'WP Super Cache is not active. Please activate WP Super Cache for the CAMOO CDN plugin to work correctly.',
+            'camoo-cdn'
+        );
+        echo '</p>
+        </div>';
+
     }
 
     /** Sets up actions and filters, including custom cron schedules. */
@@ -90,6 +97,26 @@ final class Integration
         $configFile = WP_CONTENT_DIR . '/wp-cache-config.php';
         if (file_exists($configFile)) {
             wp_cache_replace_line('^ *\$ossdlcdn', '$ossdlcdn = 0;', $configFile);
+        }
+    }
+
+    /** Creating plugin tables */
+    private static function install(): void
+    {
+        Option::add('wp_camoo_cdn_db_version', WP_CAMOO_CDN_VERSION);
+
+        if (is_admin()) {
+            self::upgrade();
+        }
+    }
+
+    /** Upgrade plugin requirements if needed */
+    private static function upgrade(): void
+    {
+        $version = Option::get('wp_camoo_cdn_db_version');
+
+        if ($version < WP_CAMOO_CDN_VERSION) {
+            Option::update('wp_camoo_cdn_db_version', WP_CAMOO_CDN_VERSION);
         }
     }
 

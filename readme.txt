@@ -44,6 +44,7 @@ Ensure WP Super Cache is installed and activated to use CAMOO CDN's latest featu
 == Changelog ==
 = 2.0.1: 26.03, 2024 =
 * Tweak: uninstall script added
+* Tweak: legacy script cleanup
 * Tweak: minor improvements
 
 = 2.0: 25.03, 2024 =

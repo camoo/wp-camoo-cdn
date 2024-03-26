@@ -34,7 +34,14 @@ final class Bootstrap
     public function displaySyncMessages(): void
     {
         if ($message = get_transient('wp_camoo_cdn_sync_message')) {
-            echo '<div class="notice notice-error is-dismissible"><p>' . esc_html($message) . '</p></div>';
+            $allowedHtml = [
+                'a' => [
+                    'href' => [],
+                    'target' => [],
+                ],
+            ];
+            echo '<div class="notice notice-error is-dismissible"><p>' . wp_kses($message, $allowedHtml) . '</p></div>';
+
             delete_transient('wp_camoo_cdn_sync_message');
         }
     }

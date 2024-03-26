@@ -43,7 +43,5 @@ if (file_exists(plugin_dir_path(__FILE__) . 'vendor/autoload.php')) {
 }
 
 // Initialize the plugin.
-add_action('plugins_loaded', function () {
-    $bootstrap = new \WP_CAMOO\CDN\Bootstrap();
-    $bootstrap->initialize();
-});
+$bootstrap = new \WP_CAMOO\CDN\Bootstrap();
+$bootstrap->initialize();

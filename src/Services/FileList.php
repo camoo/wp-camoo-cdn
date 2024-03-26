@@ -8,6 +8,10 @@ use Generator;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 
+if (!defined('ABSPATH')) {
+    exit;
+} // Exit if accessed directly
+
 final class FileList
 {
     public function get(string $directory, ?string $pattern = null): Generator
