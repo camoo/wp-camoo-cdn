@@ -19,7 +19,6 @@ delete_option('wp_camoo_cdn_oss');
 delete_option('ossdl_off_cdn_url');
 delete_option('ossdl_off_blog_url');
 delete_option('wp_camoo_cdn_db_version');
-delete_option('camoo_cdn_sync_snapshot');
 
 $configFile = WP_CONTENT_DIR . '/wp-cache-config.php';
 if (file_exists($configFile)) {

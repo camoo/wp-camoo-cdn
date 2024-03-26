@@ -51,8 +51,7 @@ final class Integration
     public static function init_actions(): void
     {
         add_filter('cron_schedules', [__CLASS__, 'addCustomCronSchedule']);
-        self::schedule_regular_sync();
-        add_action('wp_camoo_cdn_cron', [SyncFiles::class, 'sync']); // Regular sync
+
         add_action('wp_camoo_cdn_cron_soon', [SyncFiles::class, 'sync']); // Immediate sync
     }
 
@@ -85,14 +84,12 @@ final class Integration
     /** Clears scheduled tasks on plugin deactivation. */
     public static function onDeactivation(): void
     {
-        $timestamp = wp_next_scheduled('wp_camoo_cdn_cron');
-        if ($timestamp) {
-            wp_unschedule_event($timestamp, 'wp_camoo_cdn_cron');
-        }
+
         wp_clear_scheduled_hook('wp_camoo_cdn_cron_soon');
 
         delete_option('ossdl_off_cdn_url');
         delete_option('ossdl_off_blog_url');
+        delete_option('wp_camoo_cdn_oss');
 
         $configFile = WP_CONTENT_DIR . '/wp-cache-config.php';
         if (file_exists($configFile)) {
@@ -117,14 +114,6 @@ final class Integration
 
         if ($version < WP_CAMOO_CDN_VERSION) {
             Option::update('wp_camoo_cdn_db_version', WP_CAMOO_CDN_VERSION);
-        }
-    }
-
-    /** Schedules the regular sync if it's not already scheduled. */
-    private static function schedule_regular_sync(): void
-    {
-        if (!wp_next_scheduled('wp_camoo_cdn_cron')) {
-            wp_schedule_event(time(), 'camoo_cdn_cron_every_four_days', 'wp_camoo_cdn_cron');
         }
     }
 }

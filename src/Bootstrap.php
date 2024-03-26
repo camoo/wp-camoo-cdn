@@ -46,15 +46,9 @@ final class Bootstrap
         }
     }
 
-    public function scheduleImmediateSync($req_path, $referer): void
-    {
-        Integration::schedule_sync_soon();
-    }
-
     private function addHooks(): void
     {
         add_filter('all_plugins', [$this, 'modifyPluginDescription']);
-        add_action('wpsc_after_delete_cache_admin_bar', [$this, 'scheduleImmediateSync'], 10, 2);
         add_action('admin_notices', [$this, 'displaySyncMessages']);
     }
 }

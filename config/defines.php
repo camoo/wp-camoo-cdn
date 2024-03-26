@@ -23,7 +23,5 @@ $plugin_data = get_plugin_data(WP_CAMOO_CDN_DIR . 'camoo-cdn.php');
 
 // Set another useful Plugin definition.
 define('WP_CAMOO_CDN_VERSION', $plugin_data['Version']);
-const WP_CAMOO_CDN_URL = 'https://cdn.camoo.site/492220c341f7489996eb01871a2e8aca:static';
+const WP_CAMOO_CDN_SUFFIX_DOMAIN = 'https://%s.camoo.site';
 const WP_CAMOO_CDN_SITE = 'https://www.camoo.hosting';
-const WP_CAMOO_CDN_SNAPSHOT = 'camoo_cdn_sync_snapshot';
-const WP_CAMOO_CDN_STATIC_FILES_PATTERN = '/\.(jpg|jpeg|png|gif|css|js|pdf|txt|woff|woff2|svg)$/i';
