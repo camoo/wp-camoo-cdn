@@ -7,7 +7,7 @@ declare(strict_types=1);
  * Requires Plugins: wp-super-cache
  * Plugin URI: https://github.com/camoo/wp-camoo-cdn
  * Description: Integrates your WordPress site with Camoo.Hosting CDN for improved loading times and performance.
- * Version: 2.0.1
+ * Version: 2.0.2
  * Author: CAMOO SARL
  * Author URI: https://www.camoo.hosting/
  * License: GPLv2 or later
@@ -15,7 +15,7 @@ declare(strict_types=1);
  * Text Domain: camoo-cdn
  * Domain Path: /languages
  * Requires at least: 6.4.3
- * Tested up to: 6.5
+ * Tested up to: 6.5.2
  * Requires PHP: 8.0
  *
  * CAMOO CDN is free software: you can redistribute it and/or modify

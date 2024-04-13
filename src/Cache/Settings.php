@@ -11,6 +11,7 @@ if (!defined('ABSPATH')) {
 use function add_settings_section;
 
 use WP_CAMOO\CDN\Gateways\Option;
+use WP_CAMOO\CDN\Services\QueryCaching;
 
 final class Settings
 {
@@ -22,13 +23,22 @@ final class Settings
     {
         add_action('admin_menu', [self::class, 'appendMenuLink']);
         add_action('admin_init', [self::class, 'registerSettings']);
+        add_action('updated_option', [self::class, 'onOptionUpdate'], 10, 3);
+    }
+
+    /** Method to handle actions after option updates. */
+    public static function onOptionUpdate($option, $oldValue, $newValue): void
+    {
+        if ($option === 'camoo_cdn_cache_settings') {
+            QueryCaching::clear();
+        }
     }
 
     /** Appends the CAMOO CDN settings page to the WordPress admin menu. */
     public static function appendMenuLink(): void
     {
         add_menu_page(
-            __('CAMOO CDN Settings', 'camoo-cdn'),
+            __('CAMOO CDN Query Cache Settings', 'camoo-cdn'),
             'CAMOO CDN',
             'manage_options',
             'camoo_cdn',
@@ -60,33 +70,37 @@ final class Settings
 
         add_settings_section(
             'camoo_cdn_main',
-            __('CAMOO CDN Settings', 'camoo-cdn'),
+            __('CAMOO CDN Query Cache Settings', 'camoo-cdn'),
             [self::class, 'settingsDescription'],
             'camoo_cdn'
         );
-
-        self::addSettingsField(
-            'excluded_pages',
-            __('Pages to Exclude from Caching', 'camoo-cdn'),
-            [self::class, 'renderTextInput'],
-            '/foo-page, /bar-page'
-        );
-        self::addSettingsField(
-            'table_inclusion',
-            __('Tables to Include in Caching', 'camoo-cdn'),
-            [self::class, 'renderTextInput']
-        );
-        self::addSettingsField(
-            'table_exclusion',
-            __('Tables to Exclude from Caching', 'camoo-cdn'),
-            [self::class, 'renderTextInput']
-        );
+        /*
+                self::addSettingsField(
+                    'excluded_pages',
+                    __('Pages to Exclude from Caching', 'camoo-cdn'),
+                    [self::class, 'renderTextInput'],
+                    '/foo-page, /bar-page'
+                );
+                self::addSettingsField(
+                    'table_inclusion',
+                    __('Tables to Include in Caching', 'camoo-cdn'),
+                    [self::class, 'renderTextInput']
+                );
+                self::addSettingsField(
+                    'table_exclusion',
+                    __('Tables to Exclude from Caching', 'camoo-cdn'),
+                    [self::class, 'renderTextInput']
+                );*/
         self::addSettingsField(
             'cache_duration',
-            __('Cache Duration (hours)', 'camoo-cdn'),
+            __('Cache Duration (minutes)', 'camoo-cdn'),
             [self::class, 'renderNumberInput']
         );
-        self::addSettingsField('enable_caching', __('Enable Caching', 'camoo-cdn'), [self::class, 'renderCheckbox']);
+        self::addSettingsField(
+            'enable_caching',
+            __('Enable Query Caching', 'camoo-cdn'),
+            [self::class, 'renderCheckbox']
+        );
     }
 
     /** Renders a text input field for settings. */
@@ -121,7 +135,7 @@ final class Settings
     public static function settingsDescription(): void
     {
         echo '<p>' . __(
-            'Customize the caching behavior for your WordPress site with CAMOO CDN settings.',
+            'Customize the caching behavior for your WordPress site with CAMOO CDN Query Cache settings.',
             'camoo-cdn'
         ) . '</p>';
 

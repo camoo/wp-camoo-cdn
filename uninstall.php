@@ -19,7 +19,13 @@ delete_option('wp_camoo_cdn_oss');
 delete_option('ossdl_off_cdn_url');
 delete_option('ossdl_off_blog_url');
 delete_option('wp_camoo_cdn_db_version');
+delete_option('camoo_cdn_cache_settings');
 
+global $wpdb;
+$wpdb->query("
+           DELETE FROM {$wpdb->options}
+           WHERE option_name LIKE '\_transient\_camoo\_cdn\_%' OR option_name LIKE '\_transient\_timeout\_camoo\_cdn\_%'
+        ");
 $configFile = WP_CONTENT_DIR . '/wp-cache-config.php';
 if (file_exists($configFile)) {
     wp_cache_replace_line('^ *\$ossdlcdn', '$ossdlcdn = 0;', $configFile);
