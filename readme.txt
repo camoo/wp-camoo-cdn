@@ -2,6 +2,7 @@
 Contributors: camoo
 Tags: Camoo.Hosting, CAMOO CDN Integration, Managed Hosting with CDN, Hébergement Web avec CDN, WordPress Caching, WP Super Cache
 Requires at least: 6.4.3
+Requires Plugins: wp-super-cache
 Tested up to: 6.5
 Requires PHP: 8.0
 Stable tag: 2.0.1

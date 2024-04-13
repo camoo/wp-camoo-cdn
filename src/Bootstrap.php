@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace WP_CAMOO\CDN;
 
+use WP_CAMOO\CDN\Cache\Settings;
 use WP_CAMOO\CDN\Services\Integration;
+use WP_CAMOO\CDN\Services\QueryCaching;
 
 final class Bootstrap
 {
@@ -50,5 +52,14 @@ final class Bootstrap
     {
         add_filter('all_plugins', [$this, 'modifyPluginDescription']);
         add_action('admin_notices', [$this, 'displaySyncMessages']);
+
+        // Hook into the admin menu to add a settings page
+        Settings::init();
+        // Hook into the posts_results filter to cache queries
+        add_filter('posts_results', [QueryCaching::class, 'read'], 10, 2);
+
+        // Clear the cache when posts are saved or deleted
+        add_action('save_post', [QueryCaching::class, 'clear']);
+        add_action('deleted_post', [QueryCaching::class, 'clear']);
     }
 }
